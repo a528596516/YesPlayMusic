@@ -71,6 +71,11 @@ export default {
   fetchLikedSongsWithDetails: ({ state, commit }) => {
     return getPlaylistDetail(state.data.likedSongPlaylistID, true).then(
       result => {
+        if (result.playlist?.trackIds?.length === 0) {
+          return new Promise(resolve => {
+            resolve();
+          });
+        }
         return getTrackDetail(
           result.playlist.trackIds
             .slice(0, 12)
@@ -97,6 +102,11 @@ export default {
           commit('updateLikedXXX', {
             name: 'playlists',
             data: result.playlist,
+          });
+          // 更新用户”喜欢的歌曲“歌单ID
+          commit('updateData', {
+            key: 'likedSongPlaylistID',
+            value: result.playlist[0].id,
           });
         }
       });

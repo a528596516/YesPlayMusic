@@ -283,7 +283,7 @@
         </div>
       </div>
 
-      <div class="item">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
         </div>
@@ -362,7 +362,7 @@
               <option value="noProxy"> 关闭代理 </option>
               <option value="HTTP"> HTTP 代理 </option>
               <option value="HTTPS"> HTTPS 代理 </option>
-              <option value="SOCKS"> SOCKS 代理 </option>
+              <!-- <option value="SOCKS"> SOCKS 代理 </option> -->
             </select>
           </div>
         </div>
@@ -503,7 +503,8 @@ export default {
     },
     enableUnblockNeteaseMusic: {
       get() {
-        return this.settings.enableUnblockNeteaseMusic || true;
+        const value = this.settings.enableUnblockNeteaseMusic;
+        return value !== undefined ? value : true;
       },
       set(value) {
         this.$store.commit('updateSettings', {

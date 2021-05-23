@@ -1,10 +1,10 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
-import match from '@njzy/unblockneteasemusic';
+import match from '@revincx/unblockneteasemusic';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 
 const client = require('discord-rich-presence')('818936529484906596');
 
-export function initIpcMain(win, store) {
+export function initIpcMain(win, lrc, store) {
   ipcMain.on('unblock-music', (event, track) => {
     // 兼容 unblockneteasemusic 所使用的 api 字段
     track.alias = track.alia || [];
@@ -105,8 +105,8 @@ export function initIpcMain(win, store) {
   });
 
   ipcMain.on('setProxy', (event, config) => {
-    console.log(config);
     const proxyRules = `${config.protocol}://${config.server}:${config.port}`;
+    store.set('proxy', proxyRules);
     win.webContents.session.setProxy(
       {
         proxyRules,
@@ -120,5 +120,14 @@ export function initIpcMain(win, store) {
   ipcMain.on('removeProxy', (event, arg) => {
     console.log('removeProxy');
     win.webContents.session.setProxy({});
+    store.set('proxy', '');
+  });
+
+  ipcMain.on('resizeOSDLyrics', (event, arg) => {
+    lrc.resizeOSDLyrics(arg);
+  });
+
+  ipcMain.on('toggleOSDLyrics', () => {
+    lrc.toggleOSDLyrics();
   });
 }
